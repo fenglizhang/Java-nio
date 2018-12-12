@@ -1,0 +1,73 @@
+buffer的属性：capacity,position,limit的理解
+buffer是一块可以进行读和写的内存块。
+1. capacity【容量】：来指定这个内存块的大小。在读和写的情况下是一样的。
+2. position【位置】：指读或者写的指针所处的当前位置。
+写入时position位于起始端，值为0。当一个byte,long类型的数据写入后，position的位置会移动到下一个可以写入数据的buffer单元。position最大值为capacity-1.
+读取时,一般是从写切换到读的模式时，position的值会重置为0.当从buffer的position位置读取数据时，position会向前移动到下一个可读的位置。
+
+3. limit【限制】：表示你最多能往这个buffer内存入多少数据。
+读模式下。limit的值和position的值一样。表示可以读取buffer中的所有数据。
+写模式下。limit的值和capacity的值一样。
+-------------------------------------------------------------
+buffer的类型：
+ByteBuffer
+MappedByteBuffer
+CharBuffer
+DoubleBuffer
+FloatBuffer
+IntBuffer
+LongBuffer
+ShortBuffer
+这些buffer表示可以用char,double,float,int,long,short这些数据类型来处理缓冲区中的字符。
+--------------------------------------------------------------
+buffer的分配
+要想获得一个buffer对象，就首先要进行分配一个buffer空间。每个buffer类都有一个allocate方法。
+下面是一个分配了48字节空间的buffer缓冲区。
+ByteBuffer buf=ByteBuffer.allocate(48);
+分配一个可存储1024个字符的CharBuffer;
+CharBuffer buf=CharBuffer.allocate(1024);
+-------------------------------------------------------
+向buffer中写数据，有两种方式：
+1.从Channel写到Buffer.
+int bytesRead=inChannel.read(buf);
+2.通过Buffer的put()方法写到Buffer里。
+buf.put(127);
+----------------------------------
+flip()方法
+flip方法将Buffer从写的模式切换到读的模式。调用flip()方法会将position设回0，并将limit设置为写模式时的position值
+-----------------------------------
+从Buffer中读取数据也有两种方式
+1.从Buffer读取数据到Channel.
+int bytesWritten=inChannel.write(buf);
+2.使用get()方法从Buffer中读取数据。
+byte aByte=buf.get();
+get方法和put方法都有很多版本，允许你使用不同方式的Buffer读取数据。
+------------------------------------------------
+rewind()方法
+Buffer.rewind()将position设回0，所以你可以重读Buffer中的所有数据。limit保持不变，仍表示能从buffer中读取多少个字节。
+===========================================
+clear()与compact()方法。
+一旦读完Buffer中的数据，需要让Buffer准备好再次被写入。通过clear()或者compact()方法来完成。
+-----------------------------
+equals()和compareTo(),可以使用这两个方法来比较两个buffer。
+1.equals():当满足以下条件时，表示连个Buffer相等。
+有相同的类型；Buffer中的剩余的byte,char等的个数相等；Buffer中的所有剩余的byte,char等都相同。
+如你所见，equals方法只是比较Buffer的一部分，不是每一个在他里面的元素都比较。实际上，它只比较buffer中的剩余元素。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
